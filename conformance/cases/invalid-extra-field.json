@@ -1,0 +1,7 @@
+{
+  "installId": "browser-1",
+  "platform": "browser",
+  "appVersion": "1.0.0",
+  "sessionToken": "must-not-cross-public-contract"
+}
+

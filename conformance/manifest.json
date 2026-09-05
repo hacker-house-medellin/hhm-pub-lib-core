@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "hhm.public-conformance.v1",
+  "cases": [
+    { "file": "valid-client-info.json", "model": "ClientInfo", "valid": true },
+    { "file": "valid-location.json", "model": "PublicLocation", "valid": true },
+    { "file": "valid-account.json", "model": "PublicAccountContext", "valid": true },
+    { "file": "invalid-extra-field.json", "model": "ClientInfo", "valid": false },
+    { "file": "invalid-platform.json", "model": "ClientInfo", "valid": false },
+    { "file": "invalid-oversized-version.json", "model": "ClientInfo", "valid": false },
+    { "file": "invalid-uuid.json", "model": "PublicAccountContext", "valid": false },
+    { "file": "invalid-int64.json", "model": "IdempotencyKey", "valid": false },
+    { "file": "invalid-prototype-key.json", "model": "ClientInfo", "valid": false }
+  ]
+}
+

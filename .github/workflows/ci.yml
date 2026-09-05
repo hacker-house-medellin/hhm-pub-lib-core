@@ -1,0 +1,83 @@
+name: public-core-ci
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-core-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts-and-typescript:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Node 22.22.1
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
+        with:
+          node-version: 22.22.1
+          cache: npm
+      - name: Install immutable dependency graph
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Contract parity, receipt, conformance, generated drift, and types
+        run: npm test
+      - name: Upload parity receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ores-contracts-receipt
+          path: target/ores-contracts/receipt.json
+          if-no-files-found: error
+
+  rust:
+    needs: contracts-and-typescript
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Rust 1.88
+        uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87
+        with:
+          toolchain: 1.88.0
+          components: rustfmt, clippy
+      - name: Format
+        run: rustfmt --edition 2021 --check runtime/rust/src/lib.rs runtime/rust/tests/conformance.rs
+      - name: Test
+        run: cargo test --locked --manifest-path runtime/rust/Cargo.toml
+      - name: Clippy
+        run: cargo clippy --locked --manifest-path runtime/rust/Cargo.toml --all-targets -- -D warnings
+
+  dart:
+    needs: contracts-and-typescript
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: runtime/dart
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Dart 3.12.1
+        uses: dart-lang/setup-dart@e51d8e571e22473a2ddebf0ef8a2123f0ab2c02c # v1.7.1
+        with:
+          sdk: 3.12.1
+      - name: Resolve locked dependencies
+        run: dart pub get --enforce-lockfile
+      - name: Format
+        run: dart format --output=none --set-exit-if-changed lib/hhm_pub_lib_core.dart test
+      - name: Analyze
+        run: dart analyze --fatal-infos
+      - name: Test
+        run: dart test

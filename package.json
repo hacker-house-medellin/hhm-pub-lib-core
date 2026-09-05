@@ -1,0 +1,37 @@
+{
+  "name": "@hacker-house-medellin/hhm-pub-lib-core",
+  "version": "0.1.0",
+  "description": "Public client-safe contracts and runtime validation for Hacker House Medellin",
+  "type": "module",
+  "private": false,
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "generated/typescript/",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./generated/typescript/types.d.ts",
+      "import": "./generated/typescript/validate.mjs"
+    }
+  },
+  "scripts": {
+    "contracts:compile": "tsp compile contracts/typespec/main.tsp --no-emit",
+    "contracts:check": "npm run contracts:compile && node node_modules/@oresoftware/ores-contracts/src/cli.mjs check --config contracts.config.json",
+    "contracts:generate": "node node_modules/@oresoftware/ores-contracts/src/cli.mjs generate --config contracts.config.json",
+    "contracts:test": "npm run contracts:check && node --test contracts/*.test.mjs",
+    "generated:sync": "node scripts/sync-generated.mjs",
+    "generated:update": "npm run contracts:generate && npm run generated:sync",
+    "generated:verify": "npm run generated:update && git diff --exit-code -- generated runtime/rust/src/generated.rs runtime/dart/lib/src/generated/models.dart",
+    "types:check": "tsc --strict --noEmit --module NodeNext --moduleResolution NodeNext --target ES2022 contracts/typescript-witness.ts",
+    "test": "npm run contracts:test && npm run generated:verify && npm run types:check"
+  },
+  "devDependencies": {
+    "@oresoftware/ores-contracts": "https://codeload.github.com/ORESoftware/ores-contracts/tar.gz/b7c639c980fe35c681fab3c33b2b8f3ee9ae5f1c",
+    "@typespec/compiler": "1.15.0",
+    "typescript": "5.9.2"
+  }
+}
