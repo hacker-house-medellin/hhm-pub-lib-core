@@ -1,0 +1,11 @@
+node_modules/
+target/
+/generated/receipt.json
+runtime/rust/target/
+.dart_tool/
+runtime/dart/.dart_tool/
+coverage/
+*.log
+.env
+.env.*
+!.env.example

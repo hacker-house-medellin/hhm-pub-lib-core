@@ -1,0 +1,15 @@
+{
+  "$comment": "TypeSpec and JSON Schema are independently human-authored peers; neither is generated from the other.",
+  "typespec": "contracts/typespec/main.tsp",
+  "jsonSchema": "contracts/json-schema/contract.schema.json",
+  "out": "generated",
+  "target": "target/ores-contracts",
+  "artifacts": [
+    "rust/types.rs",
+    "typescript/types.d.ts",
+    "typescript/validate.mjs",
+    "dart/models.dart"
+  ],
+  "tspCompile": true
+}
+
