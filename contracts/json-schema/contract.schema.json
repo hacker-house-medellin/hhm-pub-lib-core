@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hhaus.org/schemas/public/client-core.v1.schema.json",
+  "x-ores-namespace": "Hhaus.Public",
+  "$defs": {
+    "ClientPlatform": {
+      "type": "string",
+      "enum": ["browser", "desktop", "ios", "android"]
+    },
+    "AccountKind": {
+      "type": "string",
+      "enum": ["individual", "organization"]
+    },
+    "LocationAvailability": {
+      "type": "string",
+      "enum": ["accepting-reservations", "waitlist", "closed"]
+    },
+    "ClientInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Public metadata for one client installation; never an authenticated session or credential.",
+      "x-ores-table": "public_client_installations",
+      "x-ores-primary-key": ["installId"],
+      "required": ["installId", "platform", "appVersion"],
+      "properties": {
+        "installId": { "type": "string", "maxLength": 128 },
+        "platform": { "$ref": "#/$defs/ClientPlatform" },
+        "appVersion": { "type": "string", "maxLength": 64 },
+        "locale": { "type": "string", "maxLength": 16 }
+      }
+    },
+    "IdempotencyKey": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "A client-generated replay-protection key, not proof that a mutation completed.",
+      "x-ores-table": "public_mutation_keys",
+      "x-ores-primary-key": ["key"],
+      "required": ["key", "mintedAtMs"],
+      "properties": {
+        "key": { "type": "string", "maxLength": 128 },
+        "mintedAtMs": { "type": "integer", "x-ores-width": 64 }
+      }
+    },
+    "PublicLocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Public, non-sensitive location catalog projection.",
+      "x-ores-table": "public_location_catalog",
+      "x-ores-primary-key": ["slug"],
+      "required": ["slug", "displayName", "city", "countryCode", "timezone", "availability"],
+      "properties": {
+        "slug": { "type": "string", "maxLength": 64 },
+        "displayName": { "type": "string", "maxLength": 120 },
+        "city": { "type": "string", "maxLength": 80 },
+        "countryCode": { "type": "string", "maxLength": 2 },
+        "timezone": { "type": "string", "maxLength": 64 },
+        "availability": { "$ref": "#/$defs/LocationAvailability" }
+      }
+    },
+    "PublicAccountContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Minimal public account context for B2C individuals and B2B organizations.",
+      "x-ores-table": "public_account_contexts",
+      "x-ores-primary-key": ["id"],
+      "required": ["id", "kind", "displayName"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "kind": { "$ref": "#/$defs/AccountKind" },
+        "displayName": { "type": "string", "maxLength": 120 }
+      }
+    }
+  }
+}

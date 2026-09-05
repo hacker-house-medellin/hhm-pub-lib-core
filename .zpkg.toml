@@ -1,0 +1,23 @@
+[package]
+org = "hacker-house-medellin"
+name = "hhm-pub-lib-core"
+version = "0.1.0"
+description = "Public client-safe contracts and SDK core for Hacker House Medellin"
+license = "MIT"
+kind = "multi-runtime-public-core"
+
+[package.repository]
+vcs = "git"
+url = "https://github.com/hacker-house-medellin/hhm-pub-lib-core"
+
+[build]
+command = "npm run generated:verify"
+
+[scripts]
+test = "npm run test"
+
+[publish]
+include_readme = true
+tag_format = "v{version}"
+exclude = [".env", ".env.*", "target/**", "**/*.log", ".vendor/**"]
+
