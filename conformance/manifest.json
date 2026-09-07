@@ -9,7 +9,14 @@
     { "file": "invalid-oversized-version.json", "model": "ClientInfo", "valid": false },
     { "file": "invalid-uuid.json", "model": "PublicAccountContext", "valid": false },
     { "file": "invalid-int64.json", "model": "IdempotencyKey", "valid": false },
-    { "file": "invalid-prototype-key.json", "model": "ClientInfo", "valid": false }
+    { "file": "invalid-prototype-key.json", "model": "ClientInfo", "valid": false },
+    { "file": "valid-unicode-account.json", "model": "PublicAccountContext", "valid": true },
+    { "file": "invalid-unicode-account.json", "model": "PublicAccountContext", "valid": false },
+    { "file": "valid-unicode-location.json", "model": "PublicLocation", "valid": true },
+    { "file": "invalid-unicode-location.json", "model": "PublicLocation", "valid": false },
+    { "file": "valid-unicode-client.json", "model": "ClientInfo", "valid": true },
+    { "file": "invalid-unicode-client.json", "model": "ClientInfo", "valid": false },
+    { "file": "valid-unicode-key.json", "model": "IdempotencyKey", "valid": true },
+    { "file": "invalid-unicode-key.json", "model": "IdempotencyKey", "valid": false }
   ]
 }
-

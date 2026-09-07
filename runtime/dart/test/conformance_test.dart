@@ -53,4 +53,44 @@ void main() {
       ),
     );
   });
+
+  final text = File('../../conformance/manifest.json').readAsStringSync();
+  final manifest = jsonDecode(text) as Map<String, dynamic>;
+  final cases = manifest['cases'] as List<dynamic>;
+  test('fixture manifest has the expected version and is nonempty', () {
+    expect(manifest['schemaVersion'], 'hhm.public-conformance.v1');
+    expect(cases, isNotEmpty);
+  });
+  final names = <String>{};
+  for (final raw in cases) {
+    final entry = raw as Map<String, dynamic>;
+    final file = entry['file'] as String;
+    final model = entry['model'] as String;
+    final valid = entry['valid'] as bool;
+    if (!names.add(file) ||
+        !file.endsWith('.json') ||
+        file.contains('/') ||
+        file.contains('\\')) {
+      throw StateError('Invalid or duplicate fixture basename: $file');
+    }
+    test('shared manifest: $file', () {
+      expect(
+        model,
+        isIn([
+          'ClientInfo',
+          'IdempotencyKey',
+          'PublicLocation',
+          'PublicAccountContext',
+        ]),
+      );
+      if (valid) {
+        expect(validateJson(model, fixture(file)), isNotNull);
+      } else {
+        expect(
+          () => validateJson(model, fixture(file)),
+          throwsA(isA<ContractValidationException>()),
+        );
+      }
+    });
+  }
 }
