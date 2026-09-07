@@ -75,7 +75,10 @@ mod tests {
     #[test]
     fn ascii_boundary_is_unchanged() {
         assert_eq!(bounded("abc", 3), Ok(()));
-        assert_eq!(bounded("abcd", 3), Err(ValidationError::constraint_violation()));
+        assert_eq!(
+            bounded("abcd", 3),
+            Err(ValidationError::constraint_violation())
+        );
     }
 
     #[test]
@@ -101,6 +104,9 @@ mod tests {
     #[test]
     fn zero_maximum_accepts_only_empty_input() {
         assert_eq!(bounded("", 0), Ok(()));
-        assert_eq!(bounded("é", 0), Err(ValidationError::constraint_violation()));
+        assert_eq!(
+            bounded("é", 0),
+            Err(ValidationError::constraint_violation())
+        );
     }
 }
