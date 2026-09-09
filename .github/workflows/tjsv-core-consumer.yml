@@ -1,18 +1,24 @@
 name: TJSV resident contract consumer
+
 on:
   pull_request:
   push:
     branches: [main, dev]
   workflow_dispatch:
+
 permissions:
   contents: read
+
 jobs:
   resident-contract-admission:
-    uses: hacker-house-medellin/hhm-lib-core/.github/workflows/tjsv-core-consumer.yml@df76b6e32d564fee7b2f42231d39df8de401cb3a
-# DEN-3828 / TJSV issue #20. The shared workflow admits all 32 canonical
-# resident-operation data declarations from a pinned public hhm-interfaces
-# checkout. It verifies this caller's exact head, fresh compiler parity,
-# recorded cases, current Contract IR, and seven evidence/scope refusals.
-# This is CI-only reuse: no server runtime or DB capability is imported into
-# public exports. No contracts are copied. Runtime conformance and all existing
-# generated-artifact/native checks remain independently mandatory.
+    uses: hacker-house-medellin/hhm-interfaces/.github/workflows/reusable-resident-contract-admission.yml@ec2ff82ad836ad2fc4cc1da1d0d86b1aafc8e69c
+    with:
+      consumer_repository: ${{ github.repository }}
+      consumer_role: hhm-public-core-projection
+
+# DEN-1950 / DEN-3828. Public-core code imports resident authorities from
+# hhm-interfaces and never owns or copies them. The immutable authority workflow
+# uses ORESoftware/typespec-json-schema-validator to reproduce peer parity,
+# current Contract IR, recorded cases, and the canonical evidence/scope refusal
+# suite. Runtime conformance and generated-artifact/native checks remain
+# independently mandatory; no server runtime or database capability is exported.
